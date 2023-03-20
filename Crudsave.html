@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axios postman</title>
+</head>
+<body>
+
+    <form onsubmit="saveToLocalStorage(event)">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    
+        <label for="phonenumber">Phone Number:</label>
+        <input type="tel" id="phonenumber" name="phonenumber" required>
+    
+        <input type="submit" value="Submit">
+    </form>
+    <div id="user-details"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js">
+        function saveToLocalStorage(event) {
+            event.preventDefault();
+            const name = event.target.name.value;
+            const email = event.target.email.value;
+            const phonenumber = event.target.phonenumber.value;
+           
+            // console.log("Email: " , email);
+            // console.log("Phone Number: ", phonenumber);
+            const obj = {
+                name,
+                email,
+                phonenumber
+            }
+
+ axios.post("https://crudcrud.com/api/eee51ca3ec72482d942c3449d3edc57a/appointmentdata",obj)
+  .then((response) => {
+    console.log(response)
+  })
+   .catch((error) => {
+    console.log(err);
+   });
+ }
+
+
+</script>
+
+    
+</body>
+</html>
