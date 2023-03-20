@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Saving the user Details on Curd Curd</title>
+</head>
+    <div>
+        <form onsubmit="saveOnCurdCurd(event)">
+            <div class="col-md-4">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control " id="name" name="name" 
+                    required>
+
+                <label for="email" class="form-label">Mail Id:</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                    required>
+
+                <label for="phonenumber" class="form-label">Mobile Number:</label>
+                <div class="input-group has-validation">
+           
+                    <input type="tel"  class="form-control" id="phonenumber" name="phonenumber"  required >
+                </div>
+                <br>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+        <br>
+        <ol id="list"></ol>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <script>
+        function saveOnCurdCurd(event) {
+            event.preventDefault();
+            const name = event.target.name.value;
+            const email = event.target.email.value;
+            const phonenumber = event.target.phonenumber.value;
+            const object = { name, email, phonenumber };
+
+            //Storing data on curd curd
+            axios.post("https://crudcrud.com/api/eee51ca3ec72482d942c3449d3edc57a/appointmentsaver", object)
+                .then((response) => {
+                    showUserOnScreen(response.data)
+                    //console.log(response);
+                })
+                .catch((error) => {
+                    document.body.innerHTML = document.body.innerHTML + `<h3> Something went wrong.....!`;
+                    console.log(error);
+                })
+        }
+
+        window.addEventListener('load', () => {
+            axios.get("https://crudcrud.com/api/eee51ca3ec72482d942c3449d3edc57a/appointmentsaver")
+                .then((response) => {
+                    for (let i = 0; i < response.data.length; i++) {
+                        showUserOnScreen(response.data[i])
+                    }
+                    //console.log(response);
+                })
+                .catch((error) => {
+                    document.body.innerHTML = document.body.innerHTML + `<h3> Something went wrong.....!`;
+                    console.log(error);
+                })
+        })
+
+        function showUserOnScreen(object, email) { //(object)
+            const parentElem = document.getElementById('list');
+            const newUser = document.createElement('li');
+            newUser.textContent = object.name + ', ' + object.email + ', ' + object.phonenumber;
+
+            //Cereate delete button
+            var deleteBtn = document.createElement('input');
+            deleteBtn.type = 'button';
+            deleteBtn.value = 'Delete';
+            deleteBtn.className = 'btn btn-warning'
+            deleteBtn.onclick = () => {
+                localStorage.removeItem(email); //(object.email)
+                parentElem.removeChild(newUser);
+            }
+            newUser.appendChild(deleteBtn);
+            parentElem.appendChild(newUser);
+
+            //Create edit button
+            var editBtn = document.createElement('input');
+            editBtn.type = 'button';
+            editBtn.value = 'Edit';
+            editBtn.className = 'btn btn-info';
+            editBtn.onclick = () => {
+                document.getElementById('name').value = object.name;
+                document.getElementById('email').value = object.email;
+                document.getElementById('phonenumber').value = object.phonenumber;
+                localStorage.removeItem(email);
+                parentElem.removeChild(newUser);
+            }
+            newUser.appendChild(editBtn);
+            parentElem.appendChild(newUser);
+        }
+    </script>
+</body>
+
+</html>
