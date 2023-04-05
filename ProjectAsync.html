@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerse Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+</head>
+<body>
+    <style>
+        body{
+            background-color: rgb(47, 255, 252);
+            padding: 10px;
+            font-family: sans-serif;
+        }
+
+    </style>
+   <form onsubmit="savetocrud(event)">
+        <label>Selling Price :</label>
+        <input type="number" id="price" name="price" required> <br><br>
+
+      <label>Product Name:</label>
+        <input type="text" id="product" name="product" required> <br> <br>
+        <label for="category">Category :</label>
+        <select id="category" name="category">
+            <option value="electronics">Electronics</option>
+            <option value="food">Food</option>
+            <option value="skincare">Skincare</option>
+            <option value="mobile">Mobiles</option>
+        </select> <br><br>
+        <input type="submit" value="Add a Item"  style= "padding: 10px 20px; margin-left: 10px;margin-top: 10px;"> <br> <br>
+    </form>
+    <h1 style="text-align: center;border-bottom: 2px solid black;">PRODUCTS</h1><br><br>
+    <h2>Electronic Items</h2><br></br>
+    <ul id='electronics'></ul>
+    <h2>Food Items</h2><br></br>
+    <ul id='food'></ul>
+    <h2>Skincare Items</h2><br> <br>
+    <ul id='skincare'></ul>
+    <h2>Mobile Items</h2><br> 
+    <ul id="mobile"></ul>  
+<script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <script>
+        const savetocrud = async (event) => {
+            event.preventDefault()
+            const price = event.target.price.value
+            const product = event.target.product.value
+            const category = event.target.category.value
+
+            const obj = {
+                price,
+                product,
+                category
+            }
+
+            try {
+                const postreq = await axios.post('https://crudcrud.com/api/4d4c93e8babd4b018190d75d4773b524/result', obj) 
+                showOnScreen(postreq.data);
+
+            } catch {
+                document.body.innerHTML = document.body.innerHTML + '<h4>something went wrong</h4>'
+            }
+        }
+        window.addEventListener('DOMContentLoaded', async () => {  
+            try {
+                const getreq = await axios.get('https://crudcrud.com/api/4d4c93e8babd4b018190d75d4773b524/result')
+
+              
+                for (let i = 0; i < getreq.data.length; i++) {
+                    showOnScreen(getreq.data[i])
+                }
+            }
+
+            catch {
+                (error) => {
+                    console.log(error)
+                }
+            }
+        })
+
+        const showOnScreen = async (user) => {
+            document.getElementById('price').value = ''
+            document.getElementById('product').value = ''
+            document.getElementById('category').value = ''
+
+            try {
+
+                const parent = document.getElementById(user.category)
+                const child =  `<li id=${user._id}> ${user.price} - ${user.product} - ${user.category}
+           <button onclick= editOrder('${user.price}','${user.product}','${user.category}','${user._id}')> Edit Order </button>
+           <button onclick = deleteOrder('${user._id}','${user.category}')> Delete Order </button> </li>`
+                parent.innerHTML = parent.innerHTML + child
+            }
+            catch {
+                (err) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4> Something went wrong </h4>"
+                    console.log(err)
+                }
+            }
+        }
+
+
+
+        const deleteOrder = async (userid, category) => {
+            try {
+               axios.delete(`https://crudcrud.com/api/4d4c93e8babd4b018190d75d4773b524/result/${userid}`)  
+                (removeFromScreen(userid, category))
+            }
+
+            catch {
+                (error) => {
+                    console.log('Something Went wrong')
+                }
+            }
+
+        }
+
+
+
+       const removeFromScreen = async(userid, category)=>{
+            try{
+                const parent = document.getElementById(category)
+                const child = document.getElementById(userid)
+                parent.removeChild(child)
+            }
+     catch{
+                (error) => {
+                    console.log('Something went wrong')
+                }
+            }
+        }
+
+
+
+        const editOrder = async(price, product, category, userid)=>{
+            try{
+            document.getElementById('price').value = price
+            document.getElementById('product').value = product
+            document.getElementById('category').value = category
+
+           await deleteOrder(userid, category) //call back function
+        } catch{
+                (error) => {
+                    console.log('something went wrong')
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
